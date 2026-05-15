@@ -1,0 +1,192 @@
+/*
+Il seguente codice serve per ricreare un minigioco 
+io gioco consiste nell'utilizzo di 5 led uno centrale che si accende a intervalli irregolari
+al momento dell'accensione del led ciascuno dei 2 giocatori deve schiaccere il corrispondente pulsante per primo 
+successivamente si deve accendere il led che indica chi ha fatto punto, quindi generalemnte il primo che ha schiacciato
+vince tuttavia se si schiaccia prima che il led si accenda allora il punto è dell'atro giocatore 
+il primo che raggiugne un determinato punteggio si deve accendere il led corrispondente 
+*/
+
+// COSTANTI
+
+#define volte 3       // indica il numero di punti che si devono ottenere per vincere e non il numero di turni 
+#define giocatori 2   // indica il numero di giocatori ovvero stabilemente 2 
+
+// PIN DI GIOCO 
+
+int input [giocatori] = {12, 13};   // pin usati come input ovverro quelli corrispondenti ai bottoni da schiacciare 
+int output [giocatori] = {10, 11};  // pin usati come output ovvero quelle che indicano i led che si accendono ad ongi punto fatto 
+int win_pin [giocatori] = {8, 9};   // questo è il pin di output usato per indicare chi ha vinto la partita a fine partita 
+
+int pin_reset = 7;                  // è il pin che viene usato per ricominciare il gioco da capo 
+int pin_signal = 6;                 // indica il pin usato per accendere il led che dà il segnale per iniziare il gioco 
+
+int pinBuzzer = 5;                  // musica
+
+// VARIABILI PER I GIOCATORI  
+
+unsigned punti [giocatori];     // conterrà i punti dei giocatori dove la cella 0 è quella del giocatore a cui corrisponde input[0]
+unsigned win;                   // indica chi ha vinto
+
+unsigned stato = 0;             //variabile per lo switch case
+
+void inizioGioco() {
+  tone(pinBuzzer, 440, 200); // LA 4
+  delay(300);
+  tone(pinBuzzer, 880, 500); // LA 5 
+  delay(500);
+}
+void puntoRealizzato() {
+  tone(pinBuzzer, 523, 100); // DO
+  delay(150);
+  tone(pinBuzzer, 659, 100); // MI
+  delay(150);
+  tone(pinBuzzer, 784, 300); // SOL
+  delay(300);
+}
+
+void puntoMancato() {
+  tone(pinBuzzer, 220, 300); // LA2 
+  delay(350);
+  tone(pinBuzzer, 196, 500); // SOL2
+  delay(500);
+}
+
+void vittoria() {
+  tone(pinBuzzer, 523, 150); // DO 5
+  delay(200);
+  tone(pinBuzzer, 523, 150); // DO 5
+  delay(200);
+  tone(pinBuzzer, 523, 150); // DO 5
+  delay(200);
+  tone(pinBuzzer, 659, 150); // MI 5
+  delay(200);
+  tone(pinBuzzer, 784, 150); // SOL 5
+  delay(200);
+  tone(pinBuzzer, 1047, 500); // DO 6
+  delay(600);
+}
+
+void setup() {
+
+for(unsigned i = 0; i < giocatori; i++){ //inizializzazione dei pin di input e di output 
+  pinMode(input[i], INPUT);
+  pinMode(output[i], OUTPUT);
+  pinMode(win_pin[i], OUTPUT); 
+}
+
+pinMode(pin_reset, INPUT); 
+pinMode(pin_signal, OUTPUT);
+pinMode(pinBuzzer, OUTPUT);
+
+randomSeed(analogRead(A0));         // A0 è scollegato quindi legge valori casuali 
+}
+
+void loop() {
+
+switch(stato){ 
+  case 0:
+  start();                // reset variabili e attesa 
+  break;
+  case 1:
+  accensione_led();       // controllo che nessuno schiacci prima e accensione led 
+  break;
+  case 2:
+  click();                // individua chi ha schiacciato per primo 
+  break;
+  case 3:
+  winning();              // segnala il punto e assegna il punteggio al vincitore 
+  break;
+  case 4:
+  finish();               // segnala la vittoria 
+  break;
+  }
+}
+
+void start(){ 
+  for(unsigned i = 0; i < giocatori; i++){            // azzeramento del punteggio dei giocatori 
+    punti[i] = 0; 
+  }
+
+  while(true){
+    if(digitalRead(pin_reset)){       //un giocatore ha premuto il pulsante di reset
+      stato = 1;                      //ricomincia da capo
+      inizioGioco();
+      break;    
+    }
+    delay(40);                        // pausa per risparmiare sui cicli 
+  }
+}
+
+void accensione_led(){ 
+
+  unsigned time = random(25, 100);       // genera un tempo casuale tra 1 e 4 secondi (delay(40))
+  bool c = false;
+
+  for(unsigned i = 0; i < time; i++){                // controllo per cui nessuno bari
+
+    for(unsigned y = 0; y < giocatori; y++){
+      if(digitalRead(input[y])){
+        win = giocatori - y - 1;             // ha vinto chi non ha schiacciato 
+        stato = 3;
+        c = true;
+        break;
+      }
+    }
+    delay(40);                              // pausa piccolissima
+    if(c) break;                            // esce prima per qualcuno ha imrbrogliato  
+  } 
+  if (!c){                                    // se nessuno ha imbrogliato va avanti normalmente 
+    digitalWrite(pin_signal, HIGH);           // accende il led dando il segnale ai giocatori  
+    stato = 2;                                // non hanno schiacciato prima 
+  }
+}
+
+void click(){ 
+  bool c = true;
+
+  while(c){
+
+    for(unsigned y = 0; y < giocatori; y++){
+      if(digitalRead(input[y])){
+        win = y;
+        stato = 3;
+        c = false;
+        break;
+      }
+    }
+  }
+}
+void winning(){ 
+
+  // SEGNALAZIONE DEL PUNTO
+
+  digitalWrite(output[win], HIGH);        // accende il led corrispondente al vicnitore
+  digitalWrite(pin_signal, LOW);          // spegne il led usato come segnale  
+
+  if(digitalRead(input[win]))   puntoRealizzato();      // fatto punto perchè ha schiacciato
+
+  else puntoMancato();                    // chi ha schiacciato non ha fatto punto 
+
+  delay(300);                            // piccolo pasua  
+  digitalWrite(output[win], LOW);         // spegne il led usato per indicare il punto
+
+  punti[win]++;                           // aggiorno il punteggio 
+
+  // PROSSIMO PASSAGGIO 
+
+  stato = 1;                              // se non entra nell'if prosegue il gioco normalmente (nessuno ha vinto)
+  if(punti[win] == volte) stato = 4;      // c'è un vincitore 
+}
+
+void finish(){ 
+
+  digitalWrite(win_pin[win], HIGH);         // accende il led corrispondendte al vincitore
+  vittoria();
+  delay(800);                              // pausa 
+  digitalWrite(win_pin[win], LOW);          // spegne il led corrispondendte al vincitore
+
+  stato = 0;                                // ricomincia 
+}
+
+
