@@ -1,0 +1,30 @@
+int puls_1 = 10;  // pin usati per i 2 pulsanti 
+int puls_2 = 11; 
+
+int c_1 = 0;      // contatori dei 2 pulsanti 
+int c_2 = 0; 
+
+void setup(){
+  Serial.begin(115200);     
+  pinMode(puls_1, INPUT);
+  pinMode(puls_2, INPUT);
+}
+
+void loop(){
+  int valoreLuce = analogRead(A0);
+  int luminosita = map(valoreLuce, 0, 1023, 0, 100); // converte il valore della luminosità in percentuale 
+
+  for(int i = 0; i < 4; i++){
+    if(digitalRead(puls_1)) c_1++;      // se il pulsante viene premuto aumenta il contatore 
+    if(digitalRead(puls_2)) c_2++;
+    delay(150);                          // pausa senza perdere dati
+  }
+
+  Serial.print("Luminosita: ");       // output sulla seriale 
+  Serial.println(luminosita);
+  Serial.print("pulsante 1: ");
+  Serial.println(c_1);
+  Serial.print("pulsante 2: ");
+  Serial.println(c_2);
+  Serial.println();
+}
