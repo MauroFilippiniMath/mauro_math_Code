@@ -1,0 +1,48 @@
+#include <Wire.h> // 1. Libreria necessaria per la comunicazione I2C
+
+const int MPU_addr=0x68; // 2. Indirizzo I2C del sensore GY-521
+int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ; 
+
+void setup(){
+  Wire.begin();
+  Serial.begin(9600); // 3. Avvia la comunicazione con il PC per vedere i dati
+
+  // 4. Risveglio del sensore
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x6B);  // Puntiamo al registro di gestione dell'energia (PWR_MGMT_1)
+  Wire.write(0);     // Scriviamo 0 per disattivare la modalità "sleep"
+  Wire.endTransmission(true);
+}
+
+void loop(){ 
+  // 5. Prepariamo la lettura
+  Wire.beginTransmission(MPU_addr);
+  Wire.write(0x3B);  // Puntiamo al registro 0x3B (il primo dato dell'accelerometro)
+  Wire.endTransmission(false); // false mantiene la connessione aperta
+
+  // 6. Richiediamo i dati
+  Wire.requestFrom(MPU_addr, 14, true);  // Chiediamo 14 byte in sequenza
+
+  // 7. Leggiamo e uniamo i dati
+  AcX=Wire.read()<<8|Wire.read();
+  AcY=Wire.read()<<8|Wire.read();
+  AcZ=Wire.read()<<8|Wire.read();
+  Tmp=Wire.read()<<8|Wire.read();
+  GyX=Wire.read()<<8|Wire.read();
+  GyY=Wire.read()<<8|Wire.read();
+  GyZ=Wire.read()<<8|Wire.read(); 
+
+  // 8. Stampiamo i risultati a schermo
+  Serial.print("AcX = "); Serial.print(AcX); 
+  Serial.print(" | AcY = "); Serial.print(AcY); 
+  Serial.print(" | AcZ = "); Serial.print(AcZ);
+
+  // 9. Conversione della temperatura
+  Serial.print(" | Tmp = "); Serial.print(Tmp/340.00+36.53); 
+
+  Serial.print(" | GyX = "); Serial.print(GyX);
+  Serial.print(" | GyY = "); Serial.print(GyY); 
+  Serial.print(" | GyZ = "); Serial.println(GyZ); 
+  
+  delay(333); // Aspettiamo circa un terzo di secondo prima di ripetere
+}
