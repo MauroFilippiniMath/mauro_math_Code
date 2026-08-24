@@ -1,0 +1,13 @@
+﻿I nostri laboratori
+Io conto: ma come? presso il nostro Istituto, con una durata di 60 minuti e rivolto a studenti dalla quarta primaria alla terza della scuola secondaria di primo grado (prenotazioni)
+Grazie ai grafici possiamo interpretare i dati che raccogliamo, ma qual è il grafico migliore per rappresentare un’informazione? I grafici a torta sono più accattivanti dei noiosi grafici a barre, ma li possiamo sempre usare allo stesso modo? Bolle, linee, torte, ragni, scatole con i baffi, piramidi, rami e foglie: una misteriosa signora con la lampada guiderà le nostre scelte!
+Io conto: ma perché? presso il nostro Istituto, con una durata di 60 minuti e rivolto a studenti dalla prima della scuola secondaria di primo grado alla seconda della scuola secondaria di secondo grado (prenotazioni)
+I dati sono ovunque e le statistiche contribuiscono a plasmare le nostre scelte, anche più di quanto pensiamo. In ambito scientifico i dati sono la chiave che ci permette di arrivare a nuove scoperte. In questo percorso, scoprirai cos’è la data science e che ruolo hanno i bias cognitivi nel modo in cui interpretiamo la realtà.
+
+Oltre ai laboratori, ricordiamo altre due importanti iniziative, aperte al pubblico: la Conferenza, ormai tradizionale, che si terrà venerdì 9 ottobre alle 20.30, presso l'Accademia Tadini. 
+Io conto: in piazza, si svolgerà la domenica 4 e domenica 11 ottobre, dalle 14.00 alle 17.30 in Piazza XIII Martiri a Lovere
+Trasformiamo la piazza in un laboratorio di data science a cielo aperto: partecipa alla raccolta dati e diventa protagonista di un esperimento collettivo! Accanto ad attività interattive e coinvolgenti, un percorso illustrato racconta – attraverso numeri, grafici e immagini – i modi in cui questi stessi elementi ci aiutano a interpretare la realtà.
+Nota: in caso di maltempo, l'evento si svolgerà sotto il Portico dell'Accademia Tadini
+ 
+In attesa di fornire ulteriori dettagli sull'iniziativa (non vogliamo rovinarvi la sorpresa), qui è possibile vedere il percorso che abbiamo fatto con i ragazzi per approfondire il tema. Esclusa la lezione introduttiva e quella finale, che ha fatto da ripresa, il percorso è composto da sei lezioni da due ore ciascuna, replicabile anche come percorso di educazione civica in classe.
+
