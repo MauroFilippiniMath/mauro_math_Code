@@ -1,0 +1,66 @@
+#define PIN_ANALOGICO A0
+
+// Array con i 12 nuovi valori in ordine crescente
+const int valoriPulsanti[12] = {89, 96, 105, 116, 129, 145, 166, 194, 232, 290, 387, 583}; 
+int ultimoPulsante = -1;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Sistema avviato con i nuovi valori. In attesa di input...");
+}
+
+void loop() {
+  int pulsanteAttuale = leggiPulsanteStabile();
+
+  // Se è stato premuto un pulsante valido e non è lo stesso del ciclo precedente
+  if (pulsanteAttuale != -1 && pulsanteAttuale != ultimoPulsante) {
+    Serial.print("Premuto il pulsante: ");
+    Serial.println(pulsanteAttuale);
+  }
+  
+  ultimoPulsante = pulsanteAttuale;
+}
+
+// Funzione per leggere il pulsante in modo stabile
+int leggiPulsanteStabile() {
+  int lettura1 = analogRead(PIN_ANALOGICO);
+  
+  // Il valore più basso è 89, quindi sotto 50 consideriamo il pin a riposo
+  if (lettura1 < 50) return -1;
+  
+  // Aspetta 10 millisecondi per far stabilizzare il segnale
+  delay(10); 
+  
+  int lettura2 = analogRead(PIN_ANALOGICO);
+  
+  // Controllo di stabilità: se i valori fluttuano di oltre 5 unità, scarta la lettura
+  if (abs(lettura1 - lettura2) > 5) {
+    return -1; 
+  }
+
+  // Se il segnale è stabile, procediamo con l'identificazione
+  return identificaPulsante(lettura2);
+}
+
+// Funzione di identificazione
+int identificaPulsante(int valoreLetto) {
+  int indiceMigliore = -1;
+  int distanzaMinima = 1024; 
+
+  // Cerca il valore più vicino scorrendo l'array
+  for (int i = 0; i < 12; i++) {
+    int distanza = abs(valoreLetto - valoriPulsanti[i]);
+    
+    if (distanza < distanzaMinima) {
+      distanzaMinima = distanza;
+      indiceMigliore = i;
+    }
+  }
+
+  // Soglia abbassata a 10 perché la distanza minima tra due pulsanti (es. 89 e 96) è di 7.
+  if (distanzaMinima < 10) { 
+    return indiceMigliore + 1; // Ritorna il numero del pulsante (da 1 a 12)
+  }
+  
+  return -1; 
+}
